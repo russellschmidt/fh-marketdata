@@ -48,9 +48,7 @@ const denverZip = [80237,
 function getMarket(callback) {
   zipArray = denverZip;
   getMarketList(zipArray)
-  callback()
-  // downloadCSV('farmers.csv')
-  // console.log(fmdata)
+  callback
 }
 
 
@@ -80,7 +78,7 @@ function getMarketDetail(id, name = 'unavailable', zip) {
 }
 
 function convertArrayOfObjectsToCSV(args) {
-  var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+  var result, ctr, keys, columnDelimiter, lineDelimiter, data, entry;
 
   data = args.data || null;
   if (data == null || !data.length) {
@@ -99,18 +97,21 @@ function convertArrayOfObjectsToCSV(args) {
   data.forEach(function(item) {
     ctr = 0;
     keys.forEach(function(key) {
-      if (ctr > 0) result += columnDelimiter;
+      if (ctr > 0) {
+        result += columnDelimiter;
+      }
       result += item[key];
       ctr++;
-    });
+    })
     result += lineDelimiter;
-  });
+  })
 
   return result;
 }
 
 function downloadCSV(args) {
   var data, filename, link;
+  scrubCommasFromArrayOfObjects(fmdata)
   var csv = convertArrayOfObjectsToCSV({data: fmdata});
 
   if (csv == null) return;
@@ -127,4 +128,18 @@ function downloadCSV(args) {
   link.setAttribute('href', data);
   link.setAttribute('download', filename);
   link.click();
+}
+
+function scrubCommasFromArrayOfObjects(data) {
+  for (var i = 0; i < data.length; i++) {
+    const keys = Object.keys(data[i])
+    for (const key of keys) {
+      const raw = data[i][key]
+      var poo = ''
+      if (typeof(raw) === "string") {
+        poo = raw.replace(/,/g, "|")
+        data[i][key] = poo
+      }
+    }
+  }
 }
