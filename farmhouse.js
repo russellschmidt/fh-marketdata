@@ -1,4 +1,7 @@
 var fmdata = [];
+var fmdatafull = [];
+
+const denverZip1 = [80237]
 
 const denverZip = [80237,
   80236,
@@ -42,9 +45,12 @@ const denverZip = [80237,
   80235,
 ]
 
-function getMarket() {
+function getMarket(callback) {
   zipArray = denverZip;
-  getMarketList(zipArray);
+  getMarketList(zipArray)
+  callback()
+  // downloadCSV('farmers.csv')
+  // console.log(fmdata)
 }
 
 
@@ -61,17 +67,16 @@ function getMarketId(zip) {
     .then(data => data.results)
     .then(data => {
       for (var i = 0; i < data.length; i++) {
-        getMarketDetail(data[i].id, data[i].marketname)
+        getMarketDetail(data[i].id, data[i].marketname, zip)
       }
     })
 }
 
-function getMarketDetail(id, name = 'unavailable') {
+function getMarketDetail(id, name = 'unavailable', zip) {
   const url = "https://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=" + id;
   fetch(url)
     .then(res => res.json())
-    .then(data => fmdata.push({name, ...data.marketdetails}))
-    .then(data => console.log(fmdata))
+    .then(data => fmdata.push({zip, name, ...data.marketdetails}))
 }
 
 function convertArrayOfObjectsToCSV(args) {

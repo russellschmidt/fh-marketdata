@@ -4,7 +4,7 @@
 </head>
 
 <body>
-  <button onclick="getMarket()">Get Market</button>
+  <button onclick="getMarket(downloadCSV('farmers.csv'))">Get Market</button>
 
   <a href='#' 
         onclick='downloadCSV({ filename: "farmers-markets.csv" });'
